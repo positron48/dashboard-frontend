@@ -2,7 +2,7 @@
   <div id="app">
     <v-app id="inspire">
       <v-navigation-drawer
-          v-model="drawer"
+          v-model="showPanel"
           v-if="isLogin"
           app
       >
@@ -49,7 +49,7 @@
       <v-app-bar app>
         <v-app-bar-nav-icon
             v-if="isLogin"
-            @click="drawer = !drawer"
+            @click="showPanel = !showPanel"
         >
 
         </v-app-bar-nav-icon>
@@ -73,7 +73,7 @@
       </v-app-bar>
 
       <v-main>
-        <router-view/>
+        <router-view @login="updateLogin"/>
       </v-main>
     </v-app>
   </div>
@@ -81,16 +81,16 @@
 
 <script>
   import {isLogin, logout} from './libs/auth.js'
+  import API from "@/libs/api";
   export default {
     data: () => ({
-      drawer: null,
+      showPanel: null,
 
       isLogin: false,
-      loginText: '',
 
-      /* test data */
-      username: "filatov@intaro.ru",
-      photo: "https://www.gravatar.com/avatar/3a1d1cc4974b08ebd74113167b65443a?rating=PG&size=100&default=retro",
+      /* user data */
+      username: "",
+      photo: "",
       projects: [
           "Multisite",
           "Re-new",
@@ -106,25 +106,51 @@
       },
       logout () {
         logout()
+        this.isLogin = false
         this.$router.push('/auth')
       },
-      updateLogin () {
+      updateLogin (user) {
         this.isLogin = isLogin()
-        this.loginText = this.isLogin ? 'Выйти' : 'Войти'
-        let page = location.pathname.substr(1)
+        if (user !== null && user !== undefined) {
+          this.updateUserData(user)
+        } else if(API.hasToken()) {
+          API.getUser(this.login, this.password)
+            .then(response => {
+              if ('success' in response.data && response.data.success) {
+                this.updateUserData(response.data.user)
+              } else {
+                alert('Не удалось получить данные пользователя') // todo нормальное уведомление
+                this.logout()
+              }
+            })
+            .catch(error => {
+              console.error(['user get error', error])
+              alert('Не удалось получить данные пользователя') // todo нормальное уведомление
+              this.logout()
+            })
+        }
+
+        this.redirectIfNeed()
+      },
+      updateUserData(user) {
+        this.username = user['name']
+        this.photo = user['image']
+      },
+      redirectIfNeed() {
+        let page = this.$router.currentRoute.path
         if (this.isLogin) {
-          if (page === 'auth' || page === '') {
+          if (page === '/auth' || page === '/') {
             this.go('/')
           }
         } else {
-          if (page !== 'auth' && page !== 'help') {
+          if (page !== '/auth' && page !== '/help') {
             this.go('/auth')
           }
         }
-      },
+      }
     },
     mounted: function () {
-      this.updateLogin()
+      this.updateLogin(null)
     }
   }
 </script>

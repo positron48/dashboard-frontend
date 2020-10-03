@@ -3,7 +3,7 @@ import {isLogin, logout, getToken} from './auth.js'
 import {urlEncode} from './helpers.js'
 
 const HTTP = axios.create({
-    baseURL: 'http://localhost:5000',
+    baseURL: 'http://localhost:46123',
     headers: {
         'Content-type': 'application/x-www-form-urlencoded'
     }
@@ -25,17 +25,27 @@ HTTP.interceptors.response.use(function (response) {
 
 HTTP.interceptors.request.use(
     config => {
-        config.headers.token = getToken()
+        let token = getToken()
+        if(token !== null) {
+            config.headers.token = getToken()
+        }
         return config
     }
 )
 
 export var API = {
+    hasToken () {
+        return getToken() !== null
+    },
 
-    auth (login, password, radio) {
+    auth (login, password) {
         const path = '/api/auth'
-        var data = {login: login, password: password, action: radio}
+        var data = {login: login, password: password}
         return HTTP.post(path, urlEncode(data))
+    },
+
+    getUser () {
+        return HTTP.get('/api/user')
     },
 
     // получение данных о задаче с трекера

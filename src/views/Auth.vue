@@ -62,21 +62,22 @@ export default {
   },
   methods: {
     auth () {
-      API.auth(this.login, this.password, 'login')
-          .then(response => {
-            if ('status' in response.data && response.data.status) {
-              this.isLogin = isLogin()
-              this.$emit('login')
-            } else if ('message' in response.data && response.data.message) {
-              this.alert(response.data.message)
-            } else {
-              this.alert('Попробуйте позже')
-            }
-          })
-          .catch(error => {
-            console.log(['auth error', error])
-            this.alert(error)
-          })
+      this.showAlert = false
+      API.auth(this.login, this.password)
+        .then(response => {
+          if ('success' in response.data && response.data.success) {
+            this.isLogin = isLogin()
+            this.$emit('login', response.data.user)
+          } else if ('message' in response.data && response.data.message) {
+            this.alert(response.data.message)
+          } else {
+            this.alert('Попробуйте позже')
+          }
+        })
+        .catch(error => {
+          console.error(['auth error', error])
+          this.alert(error)
+        })
     },
     onKeyDown (e) {
       if (e.keyCode === 13) { // enter

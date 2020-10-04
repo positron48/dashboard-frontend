@@ -27,12 +27,15 @@
 
         <v-divider></v-divider>
 
-        <p class="pl-5 pt-5 text-h6">Проекты</p>
+        <div class="ml-5 mt-5 ">
+          <p class="d-inline text-h6">Проекты</p>
+          <v-icon class="d-inline pb-2 pl-2" @click="addProject = true">mdi-plus</v-icon>
+        </div>
 
         <v-list>
           <v-list-item
-              v-for="text in projects"
-              :key="text"
+              v-for="project in projects"
+              :key="project.id"
               link
           >
             <v-list-item-icon>
@@ -40,7 +43,7 @@
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title>{{ text }}</v-list-item-title>
+              <v-list-item-title>{{ project.name }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -76,28 +79,39 @@
         <router-view @login="updateLogin"/>
       </v-main>
     </v-app>
+
+    <NewProject
+        v-if="addProject"
+        @close="addProject = false"
+        @create="refreshUser"
+        :projects="userProjects"
+    ></NewProject>
   </div>
 </template>
 
 <script>
   import {isLogin, logout} from './libs/auth.js'
   import API from "@/libs/api";
+  import NewProject from "@/components/NewProject";
   export default {
+    components: {NewProject},
     data: () => ({
       showPanel: null,
 
       isLogin: false,
+      addProject: false,
 
       /* user data */
       username: "",
       photo: "",
-      projects: [
-          "Multisite",
-          "Re-new",
-      ]
+      projects: [], // проекты, присутствующие в мониторинге
+      userProjects: [] // все проекты пользователя в редмайне
     }),
     methods: {
       go (screen) {
+        if(this.$router.currentRoute.path === screen){
+          return
+        }
         if (screen !== '/help' && !this.isLogin) {
           this.$router.push('/auth')
         } else {
@@ -114,10 +128,21 @@
         if (user !== null && user !== undefined) {
           this.updateUserData(user)
         } else if(API.hasToken()) {
-          API.getUser(this.login, this.password)
+          this.refreshUser()
+        }
+        this.redirectIfNeed()
+      },
+      updateUserData(user) {
+        this.username = user['name']
+        this.photo = user['image']
+        this.projects = user['projects']
+      },
+      refreshUser() {
+        API.getUser(this.login, this.password)
             .then(response => {
               if ('success' in response.data && response.data.success) {
                 this.updateUserData(response.data.user)
+                this.updateProjectList()
               } else {
                 alert('Не удалось получить данные пользователя') // todo нормальное уведомление
                 this.logout()
@@ -128,13 +153,19 @@
               alert('Не удалось получить данные пользователя') // todo нормальное уведомление
               this.logout()
             })
-        }
-
-        this.redirectIfNeed()
       },
-      updateUserData(user) {
-        this.username = user['name']
-        this.photo = user['image']
+      updateProjectList() {
+        API.getProjects()
+          .then(response => {
+            if ('success' in response.data && response.data.success) {
+              this.userProjects = response.data.projects
+            } else {
+              console.error(['getProjects error'])
+            }
+          })
+          .catch(error => {
+            console.error(['getProjects error', error])
+          })
       },
       redirectIfNeed() {
         let page = this.$router.currentRoute.path
@@ -151,6 +182,7 @@
     },
     mounted: function () {
       this.updateLogin(null)
+      this.updateProjectList()
     }
   }
 </script>

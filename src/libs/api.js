@@ -40,12 +40,22 @@ export var API = {
 
     auth (login, password) {
         const path = '/api/auth'
-        var data = {login: login, password: password}
+        let data = {login: login, password: password}
         return HTTP.post(path, urlEncode(data))
     },
 
     getUser () {
         return HTTP.get('/api/user')
+    },
+
+    getProjects () {
+        return HTTP.get('/api/projects')
+    },
+
+    createProject (id, regexp) {
+        const path = '/api/project'
+        let data = {id: id, regexp: regexp}
+        return HTTP.put(path, urlEncode(data))
     },
 
     // получение данных о задаче с трекера

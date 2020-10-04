@@ -29,13 +29,14 @@
 
         <div class="ml-5 mt-5 ">
           <p class="d-inline text-h6">Проекты</p>
-          <v-icon class="d-inline pb-2 pl-2" @click="addProject = true">mdi-plus</v-icon>
+          <v-icon class="d-inline mb-2 ml-2" @click="addProject = true">mdi-plus</v-icon>
         </div>
 
         <v-list>
           <v-list-item
               v-for="project in projects"
               :key="project.id"
+              @click="selectProject(project.id)"
               link
           >
             <v-list-item-icon>
@@ -43,7 +44,11 @@
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title>{{ project.name }}</v-list-item-title>
+              <v-list-item-title
+                  :style="project.id === currentProject ? 'font-weight: bold' : ''"
+              >
+                {{ project.name }}
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -76,7 +81,9 @@
       </v-app-bar>
 
       <v-main>
-        <router-view @login="updateLogin"/>
+        <router-view
+            @login="updateLogin"
+        />
       </v-main>
     </v-app>
 
@@ -101,6 +108,8 @@
       isLogin: false,
       addProject: false,
 
+      currentProject: null,
+
       /* user data */
       username: "",
       photo: "",
@@ -109,6 +118,11 @@
     }),
     methods: {
       go (screen) {
+        if(screen.indexOf('/project/') === 0){
+          this.currentProject = parseInt(screen.replace('/project/', ''))
+        } else {
+          this.currentProject = null
+        }
         if(this.$router.currentRoute.path === screen){
           return
         }
@@ -178,11 +192,23 @@
             this.go('/auth')
           }
         }
+      },
+      selectProject(id) {
+        this.go('/project/' + id)
       }
     },
     mounted: function () {
       this.updateLogin(null)
       this.updateProjectList()
+    },
+    created() {
+      let self = this
+      // выделение текущего проекта при загрузке страницы
+      setTimeout(function (){
+        if(self.$route.name === 'Project'){
+          self.currentProject = parseInt(self.$route.params.id)
+        }
+      }, 1000)
     }
   }
 </script>

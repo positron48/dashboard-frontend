@@ -58,6 +58,16 @@ export var API = {
         return HTTP.put(path, urlEncode(data))
     },
 
+    getProject (id) {
+        return HTTP.get('/api/project/' + id)
+    },
+
+    createTest (test, id) {
+        const path = '/api/test'
+        let data = {projectId: id, name: test.name, script: test.script, comment: test.comment}
+        return HTTP.put(path, urlEncode(data))
+    },
+
     // получение данных о задаче с трекера
     getVersion (version) {
         return HTTP.get('/api/version?version=' + version)

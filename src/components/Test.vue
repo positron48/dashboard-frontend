@@ -14,6 +14,15 @@
       ></v-progress-circular>
     </v-list-item-content>
 
+    <v-list-item-content>
+      <v-list-item-title v-if="testData && testData.redmineData">
+        {{testData.redmineData.status}}
+        {{testData.redmineData.assignedTo}}
+        {{testData.redmineData.subject}}
+        {{testData.redmineData.project}}
+      </v-list-item-title>
+    </v-list-item-content>
+
     <v-list-item-action>
       <v-btn icon>
         <v-icon color="primary" @click="emitEdit">

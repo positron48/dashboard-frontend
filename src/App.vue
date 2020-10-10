@@ -76,7 +76,7 @@
           <v-icon>mdi-door</v-icon>
         </a>
         <a @click="go('/help')">
-          <v-icon>mdi-help</v-icon>
+          <v-icon color="primary">mdi-help</v-icon>
         </a>
       </v-app-bar>
 
@@ -87,21 +87,21 @@
       </v-main>
     </v-app>
 
-    <NewProject
+    <ProjectForm
         v-if="addProject"
         @close="addProject = false"
         @create="refreshUser"
         :projects="userProjects"
-    ></NewProject>
+    ></ProjectForm>
   </div>
 </template>
 
 <script>
   import {isLogin, logout} from './libs/auth.js'
   import API from "@/libs/api";
-  import NewProject from "@/components/NewProject";
+  import ProjectForm from "@/components/ProjectForm";
   export default {
-    components: {NewProject},
+    components: {ProjectForm},
     data: () => ({
       showPanel: null,
 

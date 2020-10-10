@@ -3,7 +3,7 @@ import {isLogin, logout, getToken} from './auth.js'
 import {urlEncode} from './helpers.js'
 
 const HTTP = axios.create({
-    baseURL: 'http://localhost:46123',
+    baseURL: 'http://localhost:46219',
     headers: {
         'Content-type': 'application/x-www-form-urlencoded'
     }
@@ -68,9 +68,15 @@ export var API = {
         return HTTP.put(path, urlEncode(data))
     },
 
-    // получение данных о задаче с трекера
-    getVersion (version) {
-        return HTTP.get('/api/version?version=' + version)
+    editTest (test) {
+        const path = '/api/test/' + test.id
+        let data = {name: test.name, script: test.script, comment: test.comment}
+        return HTTP.patch(path, urlEncode(data))
+    },
+
+    // получение данных тестовой площадке
+    getTestData (id) {
+        return HTTP.get('/api/test/' + id)
     }
 }
 

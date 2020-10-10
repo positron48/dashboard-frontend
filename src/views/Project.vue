@@ -4,56 +4,45 @@
       <p class="d-inline text-h6">
         {{ projectName }}
       </p>
-      <v-icon class="d-inline" @click="addTest = true">mdi-plus</v-icon>
+      <v-icon class="d-inline" @click="addTestForm">mdi-plus</v-icon>
     </div>
 
     <v-list three-line>
       <template v-for="test in tests">
 
-        <v-list-item
-            :key="test.id"
-        >
-          <v-list-item-content>
-            <v-list-item-title v-text="test.name"></v-list-item-title>
-            <v-list-item-subtitle v-text="test.comment"></v-list-item-subtitle>
-          </v-list-item-content>
-
-          <v-list-item-action>
-            <v-btn icon>
-              <v-icon color="grey lighten-1">mdi-information</v-icon>
-            </v-btn>
-          </v-list-item-action>
-        </v-list-item>
+        <Test :key="test.id" :test="test" @edit="editTestForm"/>
 
         <v-divider
-            :key="test.id"
+            :key="'divider-' + test.id"
         ></v-divider>
       </template>
     </v-list>
 
-
-    <NewTest
-        v-if="addTest"
-        @close="addTest = false"
-        @create="createTest"
+    <TestForm
+        v-if="showTestForm"
+        @close="showTestForm = false"
+        @save="saveTest"
         :project="id"
-    ></NewTest>
+        :test="editedTest"
+    ></TestForm>
   </div>
 </template>
 
 <script>
 //import API from '@/libs/api.js'
-import NewTest from "@/components/NewTest";
+import TestForm from "@/components/TestForm";
 import API from "@/libs/api";
+import Test from "@/components/Test";
 
 export default {
-  components: {NewTest},
+  components: {Test, TestForm},
   data () {
     return {
       id: parseInt(this.$route.params.id),
-      addTest: false,
+      showTestForm: false,
       projectName: "",
 
+      editedTest: null,
       tests: []
     }
   },
@@ -68,7 +57,7 @@ export default {
             }
           })
           .catch(error => {
-            console.error(['user get error', error])
+            console.error(['project get error', error])
             alert(error) // todo нормальное уведомление
           })
     },
@@ -76,8 +65,23 @@ export default {
       this.projectName = project.name
       this.tests = project.tests
     },
-    createTest(test) {
+    saveTest(test) {
+      // ищем тест по ид в списке, если не находим - добавляем
+      for (let i = 0; i < this.tests.length; i++) {
+        if (this.tests[i].id === test.id) {
+          this.tests[i] = test
+          return
+        }
+      }
       this.tests.push(test)
+    },
+    addTestForm() {
+      this.editedTest = null
+      this.showTestForm = true
+    },
+    editTestForm(test) {
+      this.editedTest = test
+      this.showTestForm = true
     }
   },
   mounted: function () {

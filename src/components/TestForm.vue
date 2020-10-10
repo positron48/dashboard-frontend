@@ -19,7 +19,7 @@
               >
                 <v-text-field
                     label="название"
-                    v-model="test.name"
+                    v-model="testData.name"
                     required
                 ></v-text-field>
               </v-col>
@@ -31,7 +31,7 @@
               >
                 <v-text-field
                     label="url скрипта для получения статуса"
-                    v-model="test.script"
+                    v-model="testData.script"
                     required
                 ></v-text-field>
               </v-col>
@@ -43,7 +43,7 @@
               >
                 <v-text-field
                     label="комментарий"
-                    v-model="test.comment"
+                    v-model="testData.comment"
                     required
                 ></v-text-field>
               </v-col>
@@ -55,18 +55,18 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-              color="blue darken-1"
+              color="grey darken-1"
               text
               @click="close"
           >
             Закрыть
           </v-btn>
           <v-btn
-              color="blue darken-1"
+              color="primary darken-1"
               text
-              @click="createTest"
+              @click="saveTest"
           >
-            Добавить
+            Сохранить
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -78,36 +78,64 @@
   import API from "@/libs/api";
 
   export default {
-    data: () => ({
-      show: true,
-      test: {
-        id: null,
-        name: null,
-        script: null,
-        comment: null,
+    data () {
+      return {
+        show: true,
+        testData: {
+          id: this.test ? this.test.id : "",
+          name: this.test ? this.test.name : "",
+          script: this.test ? this.test.script : "",
+          comment: this.test ? this.test.comment : ""
+        }
       }
-    }),
+    },
     props: {
       project: {
         type: Number
+      },
+      test: {
+        type: Object
       }
     },
     methods: {
+      saveTest() {
+        if(!this.testData.id){
+          this.createTest()
+        } else {
+          this.editTest()
+        }
+      },
       createTest () {
-        API.createTest(this.test, this.project)
+        API.createTest(this.testData, this.project)
             .then(response => {
               if ('success' in response.data && response.data.success) {
-                this.test.id = response.data.id
+                this.testData.id = response.data.id
                 this.$emit('close')
-                this.$emit('create', this.test)
+                this.$emit('save', this.testData)
               } else {
-                alert('createProject error') //todo alert
-                console.error(['createProject error'])
+                alert('createTest error') //todo alert
+                console.error(['createTest error'])
               }
             })
             .catch(error => {
               alert(error)
-              console.error(['createProject error', error])
+              console.error(['createTest error', error])
+            })
+      },
+      editTest () {
+        API.editTest(this.testData)
+            .then(response => {
+              if ('success' in response.data && response.data.success) {
+                this.$emit('close')
+                this.$emit('save', this.testData)
+              } else {
+                alert('editTest error') //todo alert
+                console.error(['editTest error'])
+              }
+            })
+            .catch(error => {
+              alert(error)
+              console.error(['editTest error', error])
             })
       },
       close () {

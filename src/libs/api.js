@@ -52,10 +52,17 @@ export var API = {
         return HTTP.get('/api/projects')
     },
 
-    createProject (id, regexp) {
+    createProject (projectData) {
         const path = '/api/project'
-        let data = {id: id, regexp: regexp}
+        let data = {id: projectData.externalId, regexp: projectData.regexp}
         return HTTP.put(path, urlEncode(data))
+    },
+
+    editProject (projectData) {
+        console.log(['api' , projectData])
+        const path = '/api/project/' + projectData.id
+        let data = {regexp: projectData.regexp, externalId: projectData.externalId}
+        return HTTP.patch(path, urlEncode(data))
     },
 
     getProject (id) {

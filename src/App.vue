@@ -29,7 +29,7 @@
 
         <div class="ml-5 mt-5 ">
           <p class="d-inline text-h6">Проекты</p>
-          <v-icon class="d-inline mb-2 ml-2" @click="addProject = true">mdi-plus</v-icon>
+          <v-icon class="d-inline mb-2 ml-2" @click="showProjectForm = true">mdi-plus</v-icon>
         </div>
 
         <v-list>
@@ -50,6 +50,10 @@
                 {{ project.name }}
               </v-list-item-title>
             </v-list-item-content>
+
+            <v-list-item-icon v-if="project.editable">
+              <v-icon @click="editProjectForm(project)">mdi-pencil</v-icon>
+            </v-list-item-icon>
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
@@ -88,10 +92,11 @@
     </v-app>
 
     <ProjectForm
-        v-if="addProject"
-        @close="addProject = false"
-        @create="refreshUser"
+        v-if="showProjectForm"
+        @close="showProjectForm = false"
+        @save="refreshUser"
         :projects="userProjects"
+        :project="projectData"
     ></ProjectForm>
   </div>
 </template>
@@ -106,9 +111,10 @@
       showPanel: null,
 
       isLogin: false,
-      addProject: false,
+      showProjectForm: false,
 
       currentProject: null,
+      projectData: null,
 
       /* user data */
       username: "",
@@ -195,6 +201,11 @@
       },
       selectProject(id) {
         this.go('/project/' + id)
+      },
+      editProjectForm(project) {
+        console.log(['editProjectForm', project])
+        this.projectData = project
+        this.showProjectForm = true
       }
     },
     mounted: function () {

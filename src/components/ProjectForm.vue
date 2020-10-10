@@ -19,7 +19,7 @@
                 <v-autocomplete
                     :items="projects"
                     label="Проект"
-                    v-model="project"
+                    v-model="projectData.externalId"
                 ></v-autocomplete>
               </v-col>
 
@@ -30,7 +30,7 @@
               >
                 <v-text-field
                     label="regexp для получения номера задачи из названия ветки"
-                    v-model="regexp"
+                    v-model="projectData.regexp"
                     required
                 ></v-text-field>
               </v-col>
@@ -42,7 +42,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-              color="blue darken-1"
+              color="grey darken-1"
               text
               @click="close"
           >
@@ -51,9 +51,9 @@
           <v-btn
               color="blue darken-1"
               text
-              @click="createProject"
+              @click="saveProject"
           >
-            Добавить
+            Сохранить
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -65,40 +65,74 @@
   import API from "@/libs/api";
 
   export default {
-    data: () => ({
-      show: true,
-      regexp: '^\\D*(\\d+)',
-      project: null
-    }),
+    data () {
+      return {
+        show: true,
+        projectData: {
+          id: this.project ? this.project.id : null,
+          regexp: this.project ? this.project.regexp : '^\\D*(\\d+)',
+          externalId: this.project ? this.project.externalId : null
+        }
+      }
+    },
     props: {
       projects: {
         type: Array
+      },
+      project: {
+        type: Object
       }
     },
     methods: {
-      createProject () {
-        if(this.project === null){
+      saveProject() {
+        if(this.projectData.externalId === null){
           alert('Укажите проект')
         } else {
-          API.createProject(this.project, this.regexp)
-              .then(response => {
-                if ('success' in response.data && response.data.success) {
-                  this.$emit('close')
-                  this.$emit('create')
-                } else {
-                  alert('createProject error') //todo alert
-                  console.error(['createProject error'])
-                }
-              })
-              .catch(error => {
-                alert(error)
-                console.error(['createProject error', error])
-              })
+          if (!this.projectData.id) {
+            this.createProject()
+          } else {
+            this.editProject()
+          }
         }
+      },
+      createProject () {
+        API.createProject(this.projectData)
+            .then(response => {
+              if ('success' in response.data && response.data.success) {
+                this.$emit('close')
+                this.$emit('save')
+              } else {
+                alert('createProject error') //todo alert
+                console.error(['createProject error'])
+              }
+            })
+            .catch(error => {
+              alert(error)
+              console.error(['createProject error', error])
+            })
+      },
+      editProject () {
+        API.editProject(this.projectData)
+            .then(response => {
+              if ('success' in response.data && response.data.success) {
+                this.$emit('close')
+                this.$emit('save')
+              } else {
+                alert('editProject error') //todo alert
+                console.error(['editProject error'])
+              }
+            })
+            .catch(error => {
+              alert(error)
+              console.error(['editProject error', error])
+            })
       },
       close () {
         this.$emit('close')
       }
+    },
+    mounted() {
+      console.log([this.project, this.projectData])
     }
   }
 </script>

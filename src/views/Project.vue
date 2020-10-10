@@ -23,7 +23,7 @@
         @close="showTestForm = false"
         @save="saveTest"
         :project="id"
-        :test="editedTest"
+        :test="testData"
     ></TestForm>
   </div>
 </template>
@@ -42,7 +42,7 @@ export default {
       showTestForm: false,
       projectName: "",
 
-      editedTest: null,
+      testData: null,
       tests: []
     }
   },
@@ -76,11 +76,11 @@ export default {
       this.tests.push(test)
     },
     addTestForm() {
-      this.editedTest = null
+      this.testData = null
       this.showTestForm = true
     },
     editTestForm(test) {
-      this.editedTest = test
+      this.testData = test
       this.showTestForm = true
     }
   },

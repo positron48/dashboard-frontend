@@ -113,7 +113,7 @@
                 this.$emit('close')
                 this.$emit('save', this.testData)
               } else {
-                alert('createTest error') //todo alert
+                alert(response.data.message) //todo alert
                 console.error(['createTest error'])
               }
             })
@@ -129,7 +129,7 @@
                 this.$emit('close')
                 this.$emit('save', this.testData)
               } else {
-                alert('editTest error') //todo alert
+                alert(response.data.message) //todo alert
                 console.error(['editTest error'])
               }
             })

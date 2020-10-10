@@ -54,14 +54,27 @@ export var API = {
 
     createProject (projectData) {
         const path = '/api/project'
-        let data = {id: projectData.externalId, regexp: projectData.regexp}
+        let data = {
+            externalId: projectData.externalId,
+            regexp: projectData.regexp,
+            useDefaultRedmine: projectData.useDefaultRedmine,
+            redmineUrl: projectData.redmineUrl,
+            redmineUser: projectData.redmineUser,
+            redminePassword: projectData.redminePassword
+        }
         return HTTP.put(path, urlEncode(data))
     },
 
     editProject (projectData) {
-        console.log(['api' , projectData])
         const path = '/api/project/' + projectData.id
-        let data = {regexp: projectData.regexp, externalId: projectData.externalId}
+        let data = {
+            regexp: projectData.regexp,
+            useDefaultRedmine: projectData.useDefaultRedmine,
+            externalId: projectData.externalId,
+            redmineUrl: projectData.redmineUrl,
+            redmineUser: projectData.redmineUser,
+            redminePassword: projectData.redminePassword
+        }
         return HTTP.patch(path, urlEncode(data))
     },
 

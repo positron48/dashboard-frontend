@@ -53,7 +53,7 @@ export default {
             if ('success' in response.data && response.data.success) {
               self.testData = response.data.test
             } else {
-              alert('Не удалось получить данные теста' + this.test.id) // todo нормальное уведомление
+              alert(response.data.message) // todo нормальное уведомление
             }
             this.loading = false
           })

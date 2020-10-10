@@ -12,10 +12,7 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col
-                  cols="12"
-                  sm="12"
-              >
+              <v-col cols="12" sm="12" md="12">
                 <v-autocomplete
                     :items="projects"
                     label="Проект"
@@ -23,15 +20,51 @@
                 ></v-autocomplete>
               </v-col>
 
-              <v-col
-                  cols="12"
-                  sm="12"
-                  md="12"
-              >
+              <v-col cols="12" sm="12" md="12">
                 <v-text-field
                     label="regexp для получения номера задачи из названия ветки"
                     v-model="projectData.regexp"
                     required
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12" sm="12" md="12">
+                <v-checkbox
+                    v-model="projectData.useDefaultRedmine"
+                    label="Использовать редмайн по умолчанию для получения информации о задачах"
+                ></v-checkbox>
+              </v-col>
+
+              <v-col
+                  cols="12" sm="12" md="12"
+                  v-if="!projectData.useDefaultRedmine"
+              >
+                <v-text-field
+                    label="Url редмайна для получения информации о задачах"
+                    v-model="projectData.redmineUrl"
+                ></v-text-field>
+              </v-col>
+
+              <v-col
+                  cols="6" sm="12" md="12"
+                  v-if="!projectData.useDefaultRedmine"
+              >
+                <v-text-field
+                    label="Логин"
+                    v-model="projectData.redmineUser"
+                ></v-text-field>
+              </v-col>
+
+              <v-col
+                  cols="6" sm="12" md="12"
+                  v-if="!projectData.useDefaultRedmine"
+              >
+                <v-text-field
+                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="showPassword ? 'text' : 'password'"
+                    @click:append="showPassword = !showPassword"
+                    label="Пароль"
+                    v-model="projectData.redminePassword"
                 ></v-text-field>
               </v-col>
 
@@ -68,10 +101,16 @@
     data () {
       return {
         show: true,
+        showPassword: false,
         projectData: {
           id: this.project ? this.project.id : null,
           regexp: this.project ? this.project.regexp : '^\\D*(\\d+)',
-          externalId: this.project ? this.project.externalId : null
+          externalId: this.project ? this.project.externalId : null,
+          useDefaultRedmine: this.project ? this.project.useDefaultRedmine : true,
+
+          redmineUrl: this.project ? this.project.redmineUrl : '',
+          redmineUser: '',
+          redminePassword: '',
         }
       }
     },
@@ -102,7 +141,7 @@
                 this.$emit('close')
                 this.$emit('save')
               } else {
-                alert('createProject error') //todo alert
+                alert(response.data.message) //todo alert
                 console.error(['createProject error'])
               }
             })
@@ -118,7 +157,7 @@
                 this.$emit('close')
                 this.$emit('save')
               } else {
-                alert('editProject error') //todo alert
+                alert(response.data.message) //todo alert
                 console.error(['editProject error'])
               }
             })
@@ -130,9 +169,6 @@
       close () {
         this.$emit('close')
       }
-    },
-    mounted() {
-      console.log([this.project, this.projectData])
     }
   }
 </script>

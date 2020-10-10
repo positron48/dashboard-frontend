@@ -53,7 +53,7 @@ export default {
             if ('success' in response.data && response.data.success) {
               this.updateProjectData(response.data.project)
             } else {
-              alert('Не удалось получить данные проекта') // todo нормальное уведомление
+              alert(response.data.message) // todo нормальное уведомление
             }
           })
           .catch(error => {

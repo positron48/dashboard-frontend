@@ -164,7 +164,7 @@
                 this.updateUserData(response.data.user)
                 this.updateProjectList()
               } else {
-                alert('Не удалось получить данные пользователя') // todo нормальное уведомление
+                alert(response.data.message) // todo нормальное уведомление
                 this.logout()
               }
             })
@@ -180,7 +180,7 @@
             if ('success' in response.data && response.data.success) {
               this.userProjects = response.data.projects
             } else {
-              console.error(['getProjects error'])
+              console.error(response.data.message)
             }
           })
           .catch(error => {
@@ -203,7 +203,6 @@
         this.go('/project/' + id)
       },
       editProjectForm(project) {
-        console.log(['editProjectForm', project])
         this.projectData = project
         this.showProjectForm = true
       }

@@ -82,6 +82,13 @@
             Закрыть
           </v-btn>
           <v-btn
+              color="red darken-1"
+              text
+              @click="deleteProject"
+          >
+            Удалить
+          </v-btn>
+          <v-btn
               color="blue darken-1"
               text
               @click="saveProject"
@@ -165,6 +172,25 @@
               alert(error)
               console.error(['editProject error', error])
             })
+      },
+      deleteProject () {
+        if(confirm('Вы действительно хотите удалить проект?')) {
+          let projectId = this.projectData.id
+          API.deleteProject(projectId)
+              .then(response => {
+                if ('success' in response.data && response.data.success) {
+                  this.$emit('close')
+                  this.$emit('delete', projectId)
+                } else {
+                  alert(response.data.message) //todo alert
+                  console.error(['deleteProject error'])
+                }
+              })
+              .catch(error => {
+                alert(error)
+                console.error(['deleteProject error', error])
+              })
+        }
       },
       close () {
         this.$emit('close')

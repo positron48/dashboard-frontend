@@ -3,7 +3,7 @@ import {isLogin, logout, getToken} from './auth.js'
 import {urlEncode} from './helpers.js'
 
 const HTTP = axios.create({
-    baseURL: 'http://localhost:46219',
+    baseURL: 'http://localhost:46459',
     headers: {
         'Content-type': 'application/x-www-form-urlencoded'
     }
@@ -78,6 +78,11 @@ export var API = {
         return HTTP.patch(path, urlEncode(data))
     },
 
+    deleteProject (id) {
+        const path = '/api/project/' + id
+        return HTTP.delete(path)
+    },
+
     getProject (id) {
         return HTTP.get('/api/project/' + id)
     },
@@ -92,6 +97,11 @@ export var API = {
         const path = '/api/test/' + test.id
         let data = {name: test.name, script: test.script, comment: test.comment}
         return HTTP.patch(path, urlEncode(data))
+    },
+
+    deleteTest (id) {
+        const path = '/api/test/' + id
+        return HTTP.delete(path)
     },
 
     // получение данных тестовой площадке

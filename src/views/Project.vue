@@ -10,7 +10,7 @@
     <v-list three-line>
       <template v-for="test in tests">
 
-        <Test :key="test.id" :test="test" @edit="editTestForm"/>
+        <Test v-if="test" :key="test.id" :test="test" @edit="editTestForm" @copy="copyTestForm" @editComment="editTestComment"/>
 
         <v-divider
             :key="'divider-' + test.id"
@@ -22,6 +22,7 @@
         v-if="showTestForm"
         @close="showTestForm = false"
         @save="saveTest"
+        @delete="deleteTest"
         :project="id"
         :test="testData"
     ></TestForm>
@@ -29,7 +30,6 @@
 </template>
 
 <script>
-//import API from '@/libs/api.js'
 import TestForm from "@/components/TestForm";
 import API from "@/libs/api";
 import Test from "@/components/Test";
@@ -65,7 +65,84 @@ export default {
       this.projectName = project.name
       this.tests = project.tests
     },
+    addTestForm() {
+      this.testData = null
+      this.showTestForm = true
+    },
+    editTestForm(test) {
+      this.testData = test
+      this.showTestForm = true
+    },
+    copyTestForm(test) {
+      let testCopy = Object.assign({}, test)
+      testCopy.id = null
+      testCopy.comment = ""
+      this.testData = testCopy
+      this.showTestForm = true
+    },
+    editTestComment(test) {
+      this.saveTest(test)
+    },
     saveTest(test) {
+      if(!test.id){
+        this.createTest(test)
+      } else {
+        this.editTest(test)
+      }
+    },
+    createTest (test) {
+      API.createTest(test, this.id)
+          .then(response => {
+            if ('success' in response.data && response.data.success) {
+              test.id = response.data.id
+              this.showTestForm = false
+              this.showTest(test)
+            } else {
+              alert(response.data.message) //todo alert
+              console.error(['createTest error'])
+            }
+          })
+          .catch(error => {
+            alert(error)
+            console.error(['createTest error', error])
+          })
+    },
+    editTest (test) {
+      API.editTest(test)
+          .then(response => {
+            if ('success' in response.data && response.data.success) {
+              this.showTestForm = false
+              this.showTest(test)
+            } else {
+              alert(response.data.message) //todo alert
+              console.error(['editTest error'])
+            }
+          })
+          .catch(error => {
+            alert(error)
+            console.error(['editTest error', error])
+          })
+    },
+    deleteTest (test) {
+      if(confirm('Вы действительно хотите удалить тест?')) {
+        let testId = test.id
+        API.deleteTest(testId)
+            .then(response => {
+              if ('success' in response.data && response.data.success) {
+                this.showTestForm = false
+                this.deleteTestInList(testId)
+              } else {
+                alert(response.data.message) //todo alert
+                console.error(['deleteTest error'])
+              }
+            })
+            .catch(error => {
+              alert(error)
+              console.error(['deleteTest error', error])
+            })
+      }
+    },
+    showTest(test) {
       // ищем тест по ид в списке, если не находим - добавляем
       for (let i = 0; i < this.tests.length; i++) {
         if (this.tests[i].id === test.id) {
@@ -75,14 +152,15 @@ export default {
       }
       this.tests.push(test)
     },
-    addTestForm() {
-      this.testData = null
-      this.showTestForm = true
+    deleteTestInList(testId) {
+      // ищем тест по ид в списке, если не находим - добавляем
+      for (let i = 0; i < this.tests.length; i++) {
+        if (this.tests[i].id === testId) {
+          this.tests.splice(i, 1);
+          return
+        }
+      }
     },
-    editTestForm(test) {
-      this.testData = test
-      this.showTestForm = true
-    }
   },
   mounted: function () {
     this.getProject()

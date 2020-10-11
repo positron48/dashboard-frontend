@@ -1,8 +1,31 @@
 <template>
   <v-list-item>
     <v-list-item-content>
-      <v-list-item-title v-text="test.name"></v-list-item-title>
-      <v-list-item-subtitle v-text="test.comment"></v-list-item-subtitle>
+      <v-list-item-title>
+        {{test.name}}
+        <v-btn icon @click="emitEdit">
+          <v-icon x-small color="grey">
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+        <v-btn icon @click="emitCopy">
+          <v-icon x-small color="grey">
+            mdi-content-copy
+          </v-icon>
+        </v-btn>
+      </v-list-item-title>
+      <v-list-item-subtitle>
+        <span @click="editCommentClick" v-if="!isEdit">
+          {{test.comment ? test.comment : 'комментарий'}}
+        </span>
+        <v-text-field
+            ref="commentInput"
+            @blur="saveComment"
+            v-if="isEdit"
+            label="комментарий"
+            v-model="test.comment"
+        ></v-text-field>
+      </v-list-item-subtitle>
     </v-list-item-content>
 
     <v-list-item-content>
@@ -16,19 +39,46 @@
 
     <v-list-item-content>
       <v-list-item-title v-if="testData && testData.redmineData">
-        {{testData.redmineData.status}}
-        {{testData.redmineData.assignedTo}}
-        {{testData.redmineData.subject}}
-        {{testData.redmineData.project}}
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+        <span
+            v-bind="attrs"
+            v-on="on"
+        >{{testData.redmineData.status}}</span>
+          </template>
+          <span>{{testData.redmineData.project}}: {{testData.redmineData.subject}}</span>
+        </v-tooltip>
       </v-list-item-title>
+      <v-list-item-subtitle v-if="testData && testData.redmineData && testData.redmineData.assignedTo">
+        <v-icon
+            dense
+            small
+            style="margin-top: -5px"
+        >
+          mdi-face
+        </v-icon>
+        {{testData.redmineData.assignedTo}}
+      </v-list-item-subtitle>
+    </v-list-item-content>
+
+    <v-list-item-content v-if="testData && testData.additional && testData.additional.length">
+      <template v-for="prop in testData.additional">
+        <v-tooltip bottom v-if="prop.type === 'hint'" :key="prop.title + '_' + test.id">
+          <template v-slot:activator="{ on, attrs }">
+            <v-chip
+                outlined
+                v-bind="attrs"
+                v-on="on"
+            >
+              {{prop.text}}
+            </v-chip>
+          </template>
+          <span>{{prop.hint}}</span>
+        </v-tooltip>
+      </template>
     </v-list-item-content>
 
     <v-list-item-action>
-      <v-btn icon>
-        <v-icon color="primary" @click="emitEdit">
-          mdi-pencil
-        </v-icon>
-      </v-btn>
       <v-btn icon>
         <v-icon color="primary" @click="getTestData">
           mdi-refresh
@@ -46,7 +96,8 @@ export default {
   data () {
     return {
       testData: null,
-      loading: true
+      loading: true,
+      isEdit: false
     }
   },
   props: {
@@ -74,6 +125,23 @@ export default {
     },
     emitEdit() {
       this.$emit('edit', this.test)
+    },
+    emitCopy() {
+      this.$emit('copy', this.test)
+    },
+    editCommentClick() {
+      this.isEdit = true;
+      this.focusComment()
+    },
+    focusComment() {
+      this.$nextTick(() => {
+        //this one works perfectly
+        this.$refs.commentInput.focus()
+      })
+    },
+    saveComment() {
+      this.isEdit = false;
+      this.$emit('editComment', this.test)
     }
   },
   mounted: function() {

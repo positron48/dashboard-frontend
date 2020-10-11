@@ -95,6 +95,7 @@
         v-if="showProjectForm"
         @close="showProjectForm = false"
         @save="refreshUser"
+        @delete="deleteProject"
         :projects="userProjects"
         :project="projectData"
     ></ProjectForm>
@@ -205,6 +206,16 @@
       editProjectForm(project) {
         this.projectData = project
         this.showProjectForm = true
+      },
+      deleteProject(projectId) {
+        // ищем тест по ид в списке, если не находим - добавляем
+        for (let i = 0; i < this.projects.length; i++) {
+          if (this.projects[i].id === projectId) {
+            this.projects.splice(i, 1);
+            this.go('/')
+            return
+          }
+        }
       }
     },
     mounted: function () {

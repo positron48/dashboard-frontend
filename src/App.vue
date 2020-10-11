@@ -79,9 +79,6 @@
         <a v-if="isLogin" @click="logout()" class="mr-2">
           <v-icon>mdi-door</v-icon>
         </a>
-        <a @click="go('/help')">
-          <v-icon color="primary">mdi-help</v-icon>
-        </a>
       </v-app-bar>
 
       <v-main>

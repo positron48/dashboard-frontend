@@ -2,8 +2,10 @@ import axios from 'axios'
 import {isLogin, logout, getToken} from './auth.js'
 import {urlEncode} from './helpers.js'
 
+console.log(process.env)
+
 const HTTP = axios.create({
-    baseURL: 'http://localhost:46459',
+    baseURL: process.env.VUE_APP_API_HOST,
     headers: {
         'Content-type': 'application/x-www-form-urlencoded'
     }

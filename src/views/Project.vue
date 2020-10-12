@@ -17,7 +17,7 @@
       </v-tooltip>
     </div>
 
-    <v-list three-line>
+    <v-container>
       <template v-for="test in tests">
 
         <Test v-if="test" :key="test.id" :test="test" @edit="editTestForm" @copy="copyTestForm" @editComment="editTestComment"/>
@@ -26,7 +26,7 @@
             :key="'divider-' + test.id"
         ></v-divider>
       </template>
-    </v-list>
+    </v-container>
 
     <TestForm
         v-if="showTestForm"

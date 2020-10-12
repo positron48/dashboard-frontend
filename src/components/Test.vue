@@ -1,7 +1,7 @@
 <template>
-  <v-list-item>
-    <v-list-item-content>
-      <v-list-item-title>
+  <v-row>
+    <v-col cols="12" xs="2" sm="2" md="2">
+      <div>
         {{test.name}}
         <v-btn icon @click="emitEdit">
           <v-icon x-small color="grey">
@@ -18,8 +18,8 @@
           </template>
           <span>Создать копию</span>
         </v-tooltip>
-      </v-list-item-title>
-      <v-list-item-subtitle>
+      </div>
+      <div class="grey--text task-comment">
         <span @click="editCommentClick" v-if="!isEdit">
           {{test.comment ? test.comment : 'комментарий'}}
         </span>
@@ -30,33 +30,40 @@
             label="комментарий"
             v-model="test.comment"
         ></v-text-field>
-      </v-list-item-subtitle>
-    </v-list-item-content>
+      </div>
+    </v-col>
 
-    <v-list-item-content>
-      <v-list-item-title v-if="testData && testData.branch" v-text="testData.branch"></v-list-item-title>
+    <v-col cols="12" xs="2" sm="2" md="2">
+      <div v-if="testData && testData.branch">
+        {{testData.branch}}
+      </div>
       <v-progress-circular
           v-if="loading"
           indeterminate
           color="primary"
       ></v-progress-circular>
-    </v-list-item-content>
+    </v-col>
 
-    <v-list-item-content>
-      <v-list-item-title v-if="testData && testData.redmineData">
+    <v-col cols="12" xs="5" sm="5" md="6">
+      <div class="" v-if="testData && testData.redmineData && testData.redmineData.status">
+        <v-chip small label>
+          {{testData.redmineData.status}}
+        </v-chip>
+      </div>
+      <div class="task-title" v-if="testData && testData.redmineData && testData.redmineData.subject">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <a target="_blank" :href="testData.redmineData.link">
               <span
                   v-bind="attrs"
                   v-on="on"
-              >{{testData.redmineData.status}}</span>
+              >{{testData.redmineData.subject}}</span>
             </a>
           </template>
           <span>{{testData.redmineData.project}}: {{testData.redmineData.subject}}</span>
         </v-tooltip>
-      </v-list-item-title>
-      <v-list-item-subtitle v-if="testData && testData.redmineData && testData.redmineData.assignedTo">
+      </div>
+      <div class="task-assigned" v-if="testData && testData.redmineData && testData.redmineData.assignedTo">
         <v-icon
             dense
             small
@@ -65,34 +72,46 @@
           mdi-face
         </v-icon>
         {{testData.redmineData.assignedTo}}
-      </v-list-item-subtitle>
-    </v-list-item-content>
+      </div>
+    </v-col>
 
-    <v-list-item-content v-if="testData && testData.additional && testData.additional.length">
-      <template v-for="prop in testData.additional">
-        <v-tooltip bottom v-if="prop.type === 'hint'" :key="prop.title + '_' + test.id">
-          <template v-slot:activator="{ on, attrs }">
-            <v-chip
-                outlined
-                v-bind="attrs"
-                v-on="on"
-            >
-              {{prop.text}}
-            </v-chip>
-          </template>
-          <span>{{prop.hint}}</span>
-        </v-tooltip>
-      </template>
-    </v-list-item-content>
+    <v-col cols="12" xs="2" sm="2" md="1">
+      <div v-if="testData && testData.additional && testData.additional.length">
+        <template v-for="prop in testData.additional">
+          <v-tooltip bottom v-if="prop.type === 'hint'" :key="prop.title + '_' + test.id">
+            <template v-slot:activator="{ on, attrs }">
+              <a :href="prop.hint" v-if="prop.hint.indexOf('http') !== -1" class="link--no-decoration">
+                <v-chip
+                    outlined
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  {{prop.title}}: {{prop.text}}
+                </v-chip>
+              </a>
+              <v-chip
+                  outlined
+                  v-bind="attrs"
+                  v-on="on"
+                  v-if="prop.hint.indexOf('http') === -1"
+              >
+                {{prop.title}}: {{prop.text}}
+              </v-chip>
+            </template>
+            <span>{{prop.hint}}</span>
+          </v-tooltip>
+        </template>
+      </div>
+    </v-col>
 
-    <v-list-item-action>
+    <v-col cols="12" xs="1" sm="1" md="1">
       <v-btn icon>
         <v-icon color="primary" @click="getTestData">
           mdi-refresh
         </v-icon>
       </v-btn>
-    </v-list-item-action>
-  </v-list-item>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -156,3 +175,19 @@ export default {
   }
 }
 </script>
+<style>
+.link--no-decoration{
+  text-decoration: none;
+}
+.task-title, .task-assigned{
+  max-height: 25px;
+  overflow: hidden;
+}
+.task-title .v-chip{
+  margin-top: -2px;
+  margin-right: 10px;
+}
+.task-comment{
+  font-size: 14px;
+}
+</style>

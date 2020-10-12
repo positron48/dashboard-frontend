@@ -92,12 +92,18 @@ export var API = {
     createTest (test, id) {
         const path = '/api/test'
         let data = {projectId: id, name: test.name, script: test.script, comment: test.comment}
+        for(let i = 0; i < test.links.length ; i++){
+            data['links[' + test.links[i].title + ']'] = test.links[i].link
+        }
         return HTTP.put(path, urlEncode(data))
     },
 
     editTest (test) {
         const path = '/api/test/' + test.id
         let data = {name: test.name, script: test.script, comment: test.comment}
+        for(let i = 0; i < test.links.length ; i++){
+            data['links[' + test.links[i].title + ']'] = test.links[i].link
+        }
         return HTTP.patch(path, urlEncode(data))
     },
 

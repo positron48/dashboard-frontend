@@ -20,7 +20,14 @@
     <v-container>
       <template v-for="test in tests">
 
-        <Test v-if="test" :key="test.id" :test="test" @edit="editTestForm" @copy="copyTestForm" @editComment="editTestComment"/>
+        <Test
+            v-if="test"
+            :key="test.id"
+            :test="test"
+            @edit="editTestForm"
+            @copy="copyTestForm"
+            @editComment="editTestComment"
+        />
 
         <v-divider
             :key="'divider-' + test.id"

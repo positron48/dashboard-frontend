@@ -2,7 +2,35 @@
   <v-row>
     <v-col cols="12" xs="2" sm="2" md="2">
       <div>
-        {{test.name}}
+        <span v-if="!test.links.length">
+          {{test.name}}
+        </span>
+        <v-menu
+            open-on-hover
+            top
+            offset-y
+            v-if="test.links.length"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <span
+                v-bind="attrs"
+                v-on="on"
+            >
+              {{test.name}}
+            </span>
+          </template>
+
+          <v-card class="pa-2">
+            <span
+                v-for="(link, index) in test.links"
+                :key="index"
+            >
+              <a class="ma-2" target="_blank" :href="link.link">{{link.title}}</a>
+            </span>
+          </v-card>
+
+        </v-menu>
+
         <v-btn icon @click="emitEdit">
           <v-icon x-small color="grey">
             mdi-pencil
@@ -80,7 +108,7 @@
         <template v-for="prop in testData.additional">
           <v-tooltip bottom v-if="prop.type === 'hint'" :key="prop.title + '_' + test.id">
             <template v-slot:activator="{ on, attrs }">
-              <a :href="prop.hint" v-if="prop.hint.indexOf('http') !== -1" class="link--no-decoration">
+              <a target="_blank" :href="prop.hint" v-if="prop.hint.indexOf('http') !== -1" class="link--no-decoration">
                 <v-chip
                     outlined
                     v-bind="attrs"

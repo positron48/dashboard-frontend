@@ -29,7 +29,16 @@
 
         <div class="ml-5 mt-5 ">
           <p class="d-inline text-h6">Проекты</p>
-          <v-icon class="d-inline mb-2 ml-2" @click="showProjectForm = true">mdi-plus</v-icon>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-bind="attrs"
+                      v-on="on"
+                      class="d-inline mb-2 ml-2"
+                      @click="showProjectForm = true"
+              >mdi-plus</v-icon>
+            </template>
+            <span>Добавить проект</span>
+          </v-tooltip>
         </div>
 
         <v-list>
@@ -76,9 +85,19 @@
 
         <v-spacer></v-spacer>
 
-        <a v-if="isLogin" @click="logout()" class="mr-2">
-          <v-icon>mdi-door</v-icon>
-        </a>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <a v-bind="attrs"
+               v-on="on"
+               v-if="isLogin" @click="logout()" class="mr-2"
+            >
+              <v-icon>mdi-door</v-icon>
+            </a>
+          </template>
+          <span>Выход</span>
+        </v-tooltip>
+
+
       </v-app-bar>
 
       <v-main>

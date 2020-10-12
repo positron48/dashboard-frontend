@@ -4,7 +4,17 @@
       <p class="d-inline text-h6">
         {{ projectName }}
       </p>
-      <v-icon class="d-inline" @click="addTestForm">mdi-plus</v-icon>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon
+              v-bind="attrs"
+              v-on="on"
+              class="d-inline"
+              @click="addTestForm"
+          >mdi-plus</v-icon>
+        </template>
+        <span>Добавить площадку</span>
+      </v-tooltip>
     </div>
 
     <v-list three-line>

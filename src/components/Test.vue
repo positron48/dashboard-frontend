@@ -8,11 +8,16 @@
             mdi-pencil
           </v-icon>
         </v-btn>
-        <v-btn icon @click="emitCopy">
-          <v-icon x-small color="grey">
-            mdi-content-copy
-          </v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon @click="emitCopy">
+              <v-icon v-bind="attrs" v-on="on" x-small color="grey">
+                mdi-content-copy
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>Создать копию</span>
+        </v-tooltip>
       </v-list-item-title>
       <v-list-item-subtitle>
         <span @click="editCommentClick" v-if="!isEdit">
@@ -41,10 +46,12 @@
       <v-list-item-title v-if="testData && testData.redmineData">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-        <span
-            v-bind="attrs"
-            v-on="on"
-        >{{testData.redmineData.status}}</span>
+            <a target="_blank" :href="testData.redmineData.link">
+              <span
+                  v-bind="attrs"
+                  v-on="on"
+              >{{testData.redmineData.status}}</span>
+            </a>
           </template>
           <span>{{testData.redmineData.project}}: {{testData.redmineData.subject}}</span>
         </v-tooltip>

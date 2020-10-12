@@ -110,6 +110,49 @@
           mdi-refresh
         </v-icon>
       </v-btn>
+      <br>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn v-bind="attrs" v-on="on" icon @click="getTestStatus">
+            <v-icon color="primary">
+              mdi-list-status
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>git status</span>
+      </v-tooltip>
+    </v-col>
+
+    <v-col
+        cols="12" xs="12" sm="12" md="12"
+        v-if="diffLoading"
+    >
+      <v-progress-circular
+          v-if="diffLoading"
+          indeterminate
+          color="primary"
+      ></v-progress-circular>
+    </v-col>
+
+    <v-col
+        cols="12" xs="12" sm="12" md="12"
+        v-if="diffLoaded"
+    >
+      <template v-for="item in testData.diff.added">
+        <div :key="item" class="green--text">{{item}}</div>
+      </template>
+      <template v-for="item in testData.diff.modified">
+        <div :key="item" class="orange--text">{{item}}</div>
+      </template>
+      <template v-for="item in testData.diff.deleted">
+        <div :key="item" class="red--text">{{item}}</div>
+      </template>
+      <template v-for="item in testData.diff.untracked">
+        <div :key="item" class="grey--text">{{item}}</div>
+      </template>
+      <div>
+        {{diffMessage}}
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -123,6 +166,10 @@ export default {
     return {
       testData: null,
       loading: true,
+      diffLoading: false,
+      diffLoaded: false,
+      diffMessage: "",
+
       isEdit: false
     }
   },
@@ -133,6 +180,7 @@ export default {
     getTestData() {
       let self = this
       this.loading = true
+      this.diffLoaded = false
       this.testData = null
       API.getTestData(this.test.id)
           .then(response => {
@@ -148,6 +196,37 @@ export default {
             alert(error) // todo нормальное уведомление
             this.loading = false
           })
+    },
+    getTestStatus() {
+      let self = this
+
+      if(this.diffLoaded) {
+        this.diffLoaded = false
+        this.testData.diff.added = []
+        this.testData.diff.modified = []
+        this.testData.diff.deleted = []
+        this.testData.diff.untracked = []
+      } else {
+        this.diffLoading = true
+        API.getTestStatus(this.test.id)
+            .then(response => {
+              if ('success' in response.data && response.data.success) {
+                self.testData = response.data.test
+              } else {
+                alert(response.data.message) // todo нормальное уведомление
+              }
+              this.diffLoading = false
+              this.diffLoaded = true
+              this.diffMessage = ''
+            })
+            .catch(error => {
+              console.error(['getTestStatus error', error])
+              alert(error) // todo нормальное уведомление
+              this.diffLoading = false
+              this.diffLoaded = false
+              this.diffMessage = 'ошибка получения данных'
+            })
+      }
     },
     emitEdit() {
       this.$emit('edit', this.test)

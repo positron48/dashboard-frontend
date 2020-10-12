@@ -106,9 +106,14 @@ export var API = {
         return HTTP.delete(path)
     },
 
-    // получение данных тестовой площадке
+    // получение данных тестовой площадки
     getTestData (id) {
         return HTTP.get('/api/test/' + id)
+    },
+
+    // получение git status тестовой площадки
+    getTestStatus (id) {
+        return HTTP.get('/api/test/' + id + '?type=status')
     }
 }
 

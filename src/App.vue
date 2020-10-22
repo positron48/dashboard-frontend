@@ -192,17 +192,19 @@
             })
       },
       updateProjectList() {
-        API.getProjects()
-          .then(response => {
-            if ('success' in response.data && response.data.success) {
-              this.userProjects = response.data.projects
-            } else {
-              console.error(response.data.message)
-            }
-          })
-          .catch(error => {
-            console.error(['getProjects error', error])
-          })
+        if(this.isLogin) {
+          API.getProjects()
+              .then(response => {
+                if ('success' in response.data && response.data.success) {
+                  this.userProjects = response.data.projects
+                } else {
+                  console.error(response.data.message)
+                }
+              })
+              .catch(error => {
+                console.error(['getProjects error', error])
+              })
+        }
       },
       redirectIfNeed() {
         let page = this.$router.currentRoute.path

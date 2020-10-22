@@ -160,11 +160,9 @@
         this.isLogin = false
         this.$router.push('/auth')
       },
-      updateLogin (user) {
+      updateLogin () {
         this.isLogin = isLogin()
-        if (user !== null && user !== undefined) {
-          this.updateUserData(user)
-        } else if(API.hasToken()) {
+        if(API.hasToken()) {
           this.refreshUser()
         }
         this.redirectIfNeed()

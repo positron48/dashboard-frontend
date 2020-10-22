@@ -67,7 +67,7 @@ export default {
         .then(response => {
           if ('success' in response.data && response.data.success) {
             this.isLogin = isLogin()
-            this.$emit('login', response.data.user)
+            this.$emit('login')
           } else if ('message' in response.data && response.data.message) {
             this.alert(response.data.message)
           } else {

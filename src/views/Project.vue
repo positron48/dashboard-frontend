@@ -56,6 +56,7 @@ export default {
   data () {
     return {
       id: parseInt(this.$route.params.id),
+      currentId: null,
       showTestForm: false,
       projectName: "",
 
@@ -65,6 +66,7 @@ export default {
   },
   methods: {
     getProject() {
+      this.currentId = parseInt(this.id)
       API.getProject(this.id)
           .then(response => {
             if ('success' in response.data && response.data.success) {

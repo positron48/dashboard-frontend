@@ -102,7 +102,7 @@
 
       <v-main>
         <router-view
-            @login="updateLogin"
+            @login="updateLogin" :key="$route.fullPath"
         />
       </v-main>
     </v-app>

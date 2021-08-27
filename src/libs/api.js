@@ -91,7 +91,7 @@ export var API = {
 
     createTest (test, id) {
         const path = '/api/test'
-        let data = {projectId: id, name: test.name, script: test.script, comment: test.comment}
+        let data = {projectId: id, name: test.name, script: test.script, comment: test.comment, sort: test.sort}
         for(let i = 0; i < test.links.length ; i++){
             data['links[' + test.links[i].title + ']'] = test.links[i].link
         }
@@ -100,7 +100,7 @@ export var API = {
 
     editTest (test) {
         const path = '/api/test/' + test.id
-        let data = {name: test.name, script: test.script, comment: test.comment}
+        let data = {name: test.name, script: test.script, comment: test.comment, sort: test.sort}
         for(let i = 0; i < test.links.length ; i++){
             data['links[' + test.links[i].title + ']'] = test.links[i].link
         }

@@ -166,10 +166,20 @@ export default {
       for (let i = 0; i < this.tests.length; i++) {
         if (this.tests[i].id === test.id) {
           this.tests[i] = test
+          this.sortTests()
           return
         }
       }
       this.tests.push(test)
+      this.sortTests()
+    },
+    sortTests() {
+      this.tests = this.tests.sort(function(a, b) {
+        if (a.sort === b.sort) {
+          return 0;
+        }
+        return parseInt(a.sort) > parseInt(b.sort) ? 1 : -1;
+      });
     },
     deleteTestInList(testId) {
       // ищем тест по ид в списке, если не находим - добавляем

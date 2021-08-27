@@ -37,13 +37,26 @@
               </v-col>
 
               <v-col
-                  cols="12"
+                  cols="6"
                   sm="12"
-                  md="12"
+                  md="6"
               >
                 <v-text-field
                     label="комментарий"
                     v-model="testData.comment"
+                    required
+                ></v-text-field>
+              </v-col>
+
+              <v-col
+                  cols="6"
+                  sm="12"
+                  md="6"
+              >
+                <v-text-field
+                    label="сортировка"
+                    v-model="testData.sort"
+                    type="number"
                     required
                 ></v-text-field>
               </v-col>
@@ -120,7 +133,6 @@
 <script>
   export default {
     data () {
-      console.log(this.test)
       return {
         show: true,
         testData: {
@@ -128,6 +140,7 @@
           name: this.test ? this.test.name : "",
           script: this.test ? this.test.script : "",
           comment: this.test ? this.test.comment : "",
+          sort: this.test ? this.test.sort : "",
           links: (this.test && this.test.links && this.test.links.length) ? this.test.links : [
             {
               title: '',

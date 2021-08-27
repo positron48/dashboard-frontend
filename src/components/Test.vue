@@ -61,13 +61,13 @@
       </div>
     </v-col>
 
-    <v-col cols="12" xs="9" sm="9" md="9" v-if="testData.error">
-      <div style="color: red;">
+    <v-col cols="12" xs="9" sm="9" md="9" v-if="testData && testData.error">
+      <div style="color: red;" v-if="testData && testData.error">
           {{testData.message}}
       </div>
     </v-col>
 
-    <v-col cols="12" xs="2" sm="2" md="2" v-if="!testData.error">
+    <v-col cols="12" xs="2" sm="2" md="2" v-if="!testData || !testData.error">
       <div v-if="testData && testData.branch">
         {{testData.branch}}
       </div>
@@ -78,7 +78,7 @@
       ></v-progress-circular>
     </v-col>
 
-    <v-col cols="12" xs="5" sm="5" md="6" v-if="!testData.error">
+    <v-col cols="12" xs="5" sm="5" md="6" v-if="!testData || !testData.error">
       <div class="" v-if="testData && testData.redmineData && testData.redmineData.status">
         <v-chip small label>
           {{testData.redmineData.status}}
@@ -109,7 +109,7 @@
       </div>
     </v-col>
 
-    <v-col cols="12" xs="2" sm="2" md="1" v-if="!testData.error">
+    <v-col cols="12" xs="2" sm="2" md="1" v-if="!testData || !testData.error">
       <div v-if="testData && testData.additional && testData.additional.length">
         <template v-for="prop in testData.additional">
           <v-tooltip bottom v-if="prop.type === 'hint'" :key="prop.title + '_' + test.id">
@@ -145,7 +145,7 @@
         </v-icon>
       </v-btn>
       <br>
-      <v-tooltip bottom v-if="!testData.error">
+      <v-tooltip bottom v-if="!testData || !testData.error">
         <template v-slot:activator="{ on, attrs }">
           <v-btn v-bind="attrs" v-on="on" icon @click="getTestStatus">
             <v-icon color="primary">

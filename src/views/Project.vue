@@ -175,10 +175,18 @@ export default {
     },
     sortTests() {
       this.tests = this.tests.sort(function(a, b) {
-        if (parseInt(a.sort) === parseInt(b.sort)) {
+        var aSort = parseInt(a.sort)
+        if(isNaN(aSort)) {
+          aSort = 0
+        }
+        var bSort = parseInt(b.sort)
+        if(isNaN(bSort)) {
+          bSort = 0
+        }
+        if (aSort === bSort) {
           return parseInt(a.id) > parseInt(b.id) ? 1 : -1;
         }
-        return parseInt(a.sort) > parseInt(b.sort) ? 1 : -1;
+        return aSort > bSort ? 1 : -1;
       });
     },
     deleteTestInList(testId) {

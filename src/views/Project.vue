@@ -175,7 +175,7 @@ export default {
     },
     sortTests() {
       this.tests = this.tests.sort(function(a, b) {
-        if (a.sort === b.sort) {
+        if (parseInt(a.sort) === parseInt(b.sort)) {
           return parseInt(a.id) > parseInt(b.id) ? 1 : -1;
         }
         return parseInt(a.sort) > parseInt(b.sort) ? 1 : -1;
